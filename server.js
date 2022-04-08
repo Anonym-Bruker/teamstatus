@@ -22,6 +22,12 @@ const blueled = new Gpio(bluePIN, {mode: Gpio.OUTPUT});
 let dutyCycle = 0;
 
 var token = "";
+var status = "undefined";
+
+var customColor = false;
+var red = 255;
+var blue = 255;
+var green = 255;
 
 function logging(logtext)
 {
@@ -43,27 +49,57 @@ function pulse() {
 
 app.get('/', function (req, res) {
    res.render('index', {
+		status,
+		red: 255-red,
+		green: 255-green,
+		blue: 255-blue
 	});
 })
 
 
 app.post('/', function (req, res) {
-	token = req.body.inputtoken;
-	teamstatus();
+	red = 255;
+	blue = 255;
+	green = 255;
+	if(req.body.inputred != undefined && req.body.inputred != "" && req.body.inputred  < 256){
+		red = 255 - req.body.inputred;
+		customColor = true;
+	}
+	if(req.body.inputgreen != undefined && req.body.inputgreen != "" && req.body.inputgreen  < 256){
+		green = 255 - req.body.inputgreen;
+		customColor = true;
+	}
+	if(req.body.inputblue != undefined && req.body.inputblue != "" && req.body.inputblue  < 256){
+		blue = 255 - req.body.inputblue;
+		customColor = true;
+	}
+
+	if(req.body.inputtoken != undefined && req.body.inputtoken != "") {
+		customColor = false;
+		token = req.body.inputtoken;
+	}
+	teamstatus(customColor, red, green, blue);
 	res.render('index', {
+		status,
+		red: 255-red,
+		green: 255-green,
+		blue: 255-blue
 	});
 })
 
-teamstatus();
+teamstatus(false, 0, 0, 0);
 
 setInterval(() => {
-	teamstatus();
+	teamstatus(customColor, red, green, blue);
 }, 30000);
 
 
 
-async function teamstatus() {
+async function teamstatus(customColorP, redP, greenP, blueP) {
 
+	logging("Custom: " + customColorP + ", red: " + redP + ", green: " + greenP + ", blue: " + blueP);
+
+	if(!customColor){
 	var headers ={"Authorization" : "Bearer " +  token}
 	var url = "https://graph.microsoft.com/beta/me/presence"
 
@@ -76,37 +112,70 @@ async function teamstatus() {
         }, function(error, response, body) {
                 if(body != undefined && body != "") {
                         var bodyJSON = JSON.parse(body);
-			if(bodyJSON["availability"] == "Available"){
-				greenled.pwmWrite(0);
-				redled.pwmWrite(255);
-				blueled.pwmWrite(255);
+			status = bodyJSON["availability"];
+			if(status == "Available"){
+				setGreen();
 				logging("Status: Available");
-			} else if(bodyJSON["availability"] == "Away"){
-				greenled.pwmWrite(175);
-				redled.pwmWrite(0);
-				blueled.pwmWrite(255);
+			} else if(status == "Away"){
+				setYellow();
 				logging("Status: Away");
-			} else if(bodyJSON["availability"] == "Busy"){
-				greenled.pwmWrite(255);
-				redled.pwmWrite(0);
-				blueled.pwmWrite(255);
+			} else if(status == "Busy"){
+				setRed();
 				logging("Status: Busy");
 			} else {
-				greenled.pwmWrite(255);
-				redled.pwmWrite(255);
-				blueled.pwmWrite(0);
+				status = "Unknown";
+				setBlue();
 				logging("Status: Unknown");
 			}
                 } else {
-			greenled.pwmWrite(255);
-			redled.pwmWrite(255);
-			blueled.pwmWrite(0);
+			setBlue();
 		}
         });
-
+	} else {
+		setCustomColor(redP, greenP, blueP);
+	}
 
 }
 
+function setRed(){
+	red = 0;
+	green = 255;
+	blue = 255;
+	setCurrentColor();
+}
+
+function setGreen(){
+	red = 255;
+	green = 0;
+	blue = 255;
+	setCurrentColor();
+}
+
+function setBlue(){
+	red = 255;
+	green = 255;
+	blue = 0;
+	setCurrentColor();
+}
+
+function setYellow(){
+	red = 0;
+	green = 175;
+	blue = 255;
+	setCurrentColor();
+}
+
+function setCustomColor(redP, greenP, blueP){
+	greenled.pwmWrite(greenP);
+	redled.pwmWrite(redP);
+	blueled.pwmWrite(blueP);
+}
+
+function setCurrentColor(){
+	greenled.pwmWrite(green);
+	redled.pwmWrite(red);
+	blueled.pwmWrite(blue);
+}
 
 
 var server = app.listen(8081, function () {

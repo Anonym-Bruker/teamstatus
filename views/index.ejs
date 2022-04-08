@@ -7,10 +7,90 @@
     <title>Teamstatus</title>
 </head>
 <body>
-Input new token here:
+<script>
+function redonchange(color) {
+	var label = document.getElementById("lblred"); 
+	label.innerHTML = color;
+}
+function greenonchange(color) {
+	var label = document.getElementById("lblgreen"); 
+	label.innerHTML = color;
+}
+function blueonchange(color) {
+	var label = document.getElementById("lblblue"); 
+	label.innerHTML = color;
+}
+</script>
+Current status: <%=status%>
+<br/>
+<br/>
 <form action="/" method="post">
-	<input type="text" id="token" name="inputtoken">
-	<input type="submit" value="Rerfresh token">
+<table>
+<tr>
+	<td>
+		Red:	
+	</td>
+
+	<td>
+	<div>
+		<input type="range" id="token" name="inputred" min="0" max="255" value="<%=red%>" onchange=redonchange(this.value)>
+		<label id="lblred"><%=red%></label>
+	</div>
+	</td>
+	</tr>
+	<tr>
+	<td>
+		Green:	
+	</td>
+	<td>
+		<input type="range" id="token" name="inputgreen" min="0" max="255" value="<%=green%>" onchange=greenonchange(this.value)>
+		<label id="lblgreen"><%=green%></label>
+	</td>
+</tr>
+<tr>
+	<td>
+		Blue:	
+	</td>
+	<td>
+		<input type="range" id="token" name="inputblue" min="0" max="255" value="<%=blue%>" onchange=blueonchange(this.value)>
+		<label id="lblblue"><%=blue%></label>
+	</td>
+</tr>
+<tr>
+	<td>
+		--------
+	</td>
+	<td>
+		--------
+
+	</td>
+</tr>
+<tr>
+	<td>
+		Token: 
+	</td>
+	<td>
+		<input type="text" id="token" name="inputtoken" size="50">
+	</td>
+</tr>
+<tr>
+	<td>
+		--------
+	</td>
+	<td>
+		--------
+
+	</td>
+</tr>
+<tr>
+	<td>
+	</td>
+	<td>
+		<br/>
+		<input type="submit" value="Rerfresh token">
+	</td>
+</tr>
+</table>
 </form>
 
 </body>

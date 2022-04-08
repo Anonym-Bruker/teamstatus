@@ -3,4 +3,8 @@ Update PINS suiting your own setup
 
 Since I don't have enough Azure access rights, I need to manually update the token, thus this simple web page
 
+How to start:
+sudo node server.js &
+
+How to use:
 Start the web page at localhost:8081 (or other port set in the code)
