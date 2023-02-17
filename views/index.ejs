@@ -11,20 +11,32 @@
 function redonchange(color) {
 	var label = document.getElementById("lblred"); 
 	label.innerHTML = color;
+	document.getElementById("colorform").submit();
 }
 function greenonchange(color) {
 	var label = document.getElementById("lblgreen"); 
 	label.innerHTML = color;
+	document.getElementById("colorform").submit();
 }
 function blueonchange(color) {
 	var label = document.getElementById("lblblue"); 
 	label.innerHTML = color;
+	document.getElementById("colorform").submit();
+}
+function setColors(red, green, blue) {
+	var inputRed = document.getElementById("tokenRed"); 
+	inputRed.value = red;
+	var inputGreen = document.getElementById("tokenGreen"); 
+	inputGreen.value = green;
+	var inputBlue = document.getElementById("tokenBlue"); 
+	inputBlue.value = blue;
+	document.getElementById("colorform").submit();
 }
 </script>
 Current status: <%=status%>
 <br/>
 <br/>
-<form action="/" method="post">
+<form id="colorform" action="/" method="post">
 <table>
 <tr>
 	<td>
@@ -33,18 +45,24 @@ Current status: <%=status%>
 
 	<td>
 	<div>
-		<input type="range" id="token" name="inputred" min="0" max="255" value="<%=red%>" onchange=redonchange(this.value)>
+		<input type="range" id="tokenRed" name="inputred" min="0" max="255" value="<%=red%>" onchange=redonchange(this.value)>
 		<label id="lblred"><%=red%></label>
 	</div>
 	</td>
-	</tr>
-	<tr>
+	<td>
+		<button onclick="setColors(255,0,0)">Red</button>
+	</td>
+</tr>
+<tr>
 	<td>
 		Green:	
 	</td>
 	<td>
-		<input type="range" id="token" name="inputgreen" min="0" max="255" value="<%=green%>" onchange=greenonchange(this.value)>
+		<input type="range" id="tokenGreen" name="inputgreen" min="0" max="255" value="<%=green%>" onchange=greenonchange(this.value)>
 		<label id="lblgreen"><%=green%></label>
+	</td>
+	<td>
+		<button onclick="setColors(0,255,0)">Green</button>
 	</td>
 </tr>
 <tr>
@@ -52,8 +70,11 @@ Current status: <%=status%>
 		Blue:	
 	</td>
 	<td>
-		<input type="range" id="token" name="inputblue" min="0" max="255" value="<%=blue%>" onchange=blueonchange(this.value)>
+		<input type="range" id="tokenBlue" name="inputblue" min="0" max="255" value="<%=blue%>" onchange=blueonchange(this.value)>
 		<label id="lblblue"><%=blue%></label>
+	</td>
+	<td>
+		<button onclick="setColors(0,0,255)">Blue</button>
 	</td>
 </tr>
 <tr>
@@ -85,14 +106,27 @@ Current status: <%=status%>
 <tr>
 	<td>
 	</td>
-	<td>
-		<br/>
+</tr>
+</table>
 		<input type="submit" value="Rerfresh token">
+</form>
+<br/>
+<br/>
+<table>
+<tr>
+	<td>
+		<form id="colorform" action="/blink" method="post">
+			<input type="submit" value="Blinking">
+		</form>
+	</td>
+	<td>
+		<button onclick="setColors(255,145,0)">Yellow</button>
+	</td>
+	<td>
+		<button onclick="setColors(255,118,118)">White</button>
 	</td>
 </tr>
 </table>
-</form>
-
 </body>
 </html>
 
